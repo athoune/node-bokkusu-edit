@@ -1,0 +1,12 @@
+{
+    "jdhoe": {
+        "firtsname": "John",
+        "lastname": "jshoe",
+        "group": ["victim", "killer"]
+    },
+    "tdurden": {
+        "firtsname": "Tyler",
+        "lastname": "Durden"
+    }
+
+}
