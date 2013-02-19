@@ -7,6 +7,7 @@ var app = express();
 
 app.use(express.directory('public'));
 app.use(express.static('public'));
+app.use(express.bodyParser());
 
 app.get('/hello.txt', function(req, res) {
   var body = 'Hello World';
