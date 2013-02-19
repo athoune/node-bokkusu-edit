@@ -15,12 +15,13 @@
     </head>
     <body>
         <div class="container">
-            <form action="#" class="form-search">
-                <div class="control-group">
+            <div class="control-group">
+                <form action="#" class="form-search">
                     <input type="text" name="key" id="key" class="input-medium search-query"/>
                     <a href="#" id="search" class="btn"><i class="icon-search"></i></a>
-                </div>
-                <div class="editor">
+                </form>
+            </div>
+            <div class="editor">
                 <div class="btn-group">
                     <a class="btn" href="#" id="save"><i class="icon-pencil"></i>Save</a>
                     <a class="btn disabled" href="#" id="undo"><i class="icon-refresh"></i>Undo</a>
@@ -36,15 +37,20 @@
                     <div class="tab-pane active" id="mate">
                         <div id="mate-editor" class="json-editor"></div>
                     </div>
-                    <div class="tab-pane" id="yaml">...</div>
+                    <div class="tab-pane" id="yaml">
+                        <form action="#" class="form-search">
+                            <textarea rows="3" id="yaml-editor"></textarea>
+                        </form>
+
+                    </div>
                     <div class="tab-pane" id="raw">...</div>
                 </div>
             </div>
 
-            </form>
         </div>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script src="/js/bootstrap.min.js"></script>
+        <script src="/js/js-yaml.min.js"></script>
         <script src="/js/jquery.jsoneditor.min.js"></script>
         <script>
             $(function() {
@@ -53,10 +59,11 @@
                 var current=null;
                 var load = function() {
                     $.getJSON('/data/' + key, function(data, status, xhr) {
-                        $('#editor').show()
+                        $('#yaml-editor').val(jsyaml.dump(data));
                         $('#mate-editor').jsonEditor(data, {change: function() {
                             current = this.original;
                         }});
+                        $('#editor').show()
                     }).error(function() {
                         $('#editor').hide();
                     });;
@@ -70,7 +77,7 @@
                 $('#search').click(loadkey);
                 $('#save').click(function() {
                     $.ajax('/data/' + key, {
-                        data:JSON.stringify(current),
+                        data: current,
                         mimeType:'application/json',
                         success: function() {
                             console.log("saved");
@@ -79,6 +86,7 @@
                     });
                     return false;
                 });
+                //initial load
                 load();
             });
         </script>
