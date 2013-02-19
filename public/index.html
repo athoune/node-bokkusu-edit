@@ -8,16 +8,67 @@
         <meta name="author" content="">
 
         <!-- Le styles -->
-        <link href="public/css/bootstrap.min.css" rel="stylesheet">
-        <link href="public/css/bootstrap-responsive.min.css" rel="stylesheet">
-        <link href="public/css/jsoneditor.css" rel="stylesheet">
+        <link href="/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/css/bootstrap-responsive.min.css" rel="stylesheet">
+        <link href="/css/jsoneditor.css" rel="stylesheet">
 
     </head>
     <body>
+        <div class="container">
+            <form action="#" class="form-search">
+                <div class="control-group">
+                    <input type="text" name="key" id="key" class="input-medium search-query"/>
+                    <a href="#" id="search" class="btn"><i class="icon-search"></i></a>
+                </div>
+                <div class="editor">
+                <div class="btn-group">
+                    <a class="btn" href="#" id="save"><i class="icon-pencil"></i>Save</a>
+                    <a class="btn" href="#" id="undo"><i class="icon-refresh"></i>Undo</a>
+                    <a class="btn" href="#" id="delete"><i class="icon-trash"></i>Delete</a>
+                </div>
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#mate" data-toggle="tab">Mate</a></li>
+                    <li><a href="#yaml" data-toggle="tab">Yaml</a></li>
+                    <li><a href="#raw" data-toggle="tab">Raw</a></li>
+                </ul>
 
+                <div class="tab-content">
+                    <div class="tab-pane active" id="mate">
+                        <div id="mate-editor" class="json-editor"></div>
+                    </div>
+                    <div class="tab-pane" id="yaml">...</div>
+                    <div class="tab-pane" id="raw">...</div>
+                </div>
+            </div>
 
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-        <script src="public/js/bootstrap.min.js"></script>
-        <script src="public/js/jquery.jsoneditor.min.js"></script>
+            </form>
+        </div>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="/js/bootstrap.min.js"></script>
+        <script src="/js/jquery.jsoneditor.min.js"></script>
+        <script>
+            $(function() {
+                $('#myTab a:last').tab('show');
+                var key="tdurden";
+                var load = function() {
+                    $.getJSON('/data/' + key, function(data, status, xhr) {
+                        $('#editor').show()
+                        $('#mate-editor').jsonEditor(data, {}, function() {
+                            console.log("changing", this);
+                        });
+                    }).error(function() {
+                        $('#editor').hide();
+                    });;
+                }
+                var loadkey = function() {
+                    key = $('#key').val();
+                    load();
+                    return false;
+                }
+                $('form').submit(loadkey);
+                $('#search').click(loadkey);
+                load();
+            });
+        </script>
     </body>
 </html>
