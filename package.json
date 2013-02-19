@@ -5,7 +5,7 @@
     "author": "Mathieu Lecarme <mathieu@garambrogne.net>",
     "description": "Web edit bookkusu data",
     "dependencies": {
-        "bokkusu": ">= 0.0.3",
+        "bokkusu": ">= 0.0.4",
         "express": ">= 3.1"
     },
     "devDependencies": {
