@@ -23,8 +23,8 @@
                 <div class="editor">
                 <div class="btn-group">
                     <a class="btn" href="#" id="save"><i class="icon-pencil"></i>Save</a>
-                    <a class="btn" href="#" id="undo"><i class="icon-refresh"></i>Undo</a>
-                    <a class="btn" href="#" id="delete"><i class="icon-trash"></i>Delete</a>
+                    <a class="btn disabled" href="#" id="undo"><i class="icon-refresh"></i>Undo</a>
+                    <a class="btn disabled" href="#" id="delete"><i class="icon-trash"></i>Delete</a>
                 </div>
                 <ul class="nav nav-tabs">
                     <li class="active"><a href="#mate" data-toggle="tab">Mate</a></li>
@@ -50,12 +50,13 @@
             $(function() {
                 $('#myTab a:last').tab('show');
                 var key="tdurden";
+                var current=null;
                 var load = function() {
                     $.getJSON('/data/' + key, function(data, status, xhr) {
                         $('#editor').show()
-                        $('#mate-editor').jsonEditor(data, {}, function() {
-                            console.log("changing", this);
-                        });
+                        $('#mate-editor').jsonEditor(data, {change: function() {
+                            current = this.original;
+                        }});
                     }).error(function() {
                         $('#editor').hide();
                     });;
@@ -67,6 +68,17 @@
                 }
                 $('form').submit(loadkey);
                 $('#search').click(loadkey);
+                $('#save').click(function() {
+                    $.ajax('/data/' + key, {
+                        data:JSON.stringify(current),
+                        mimeType:'application/json',
+                        success: function() {
+                            console.log("saved");
+                        },
+                        type: 'PUT'
+                    });
+                    return false;
+                });
                 load();
             });
         </script>
