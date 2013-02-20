@@ -13,7 +13,8 @@ $(function() {
 
     $('#yaml-editor').blur(function(evt) {
         try {
-            var data = jsyaml.load($(this).val());
+            var raw = $(this).html().toString().replace(/<br>/g, '\n');
+            var data = jsyaml.load(raw);
         } catch (e) {
             // FIXME check if it's a YAML error
             console.log('error', e);
@@ -41,7 +42,7 @@ $(function() {
 
     //yaml
     editor.on('dataloaded', function(evt, data) {
-        $('#yaml-editor').val(jsyaml.dump(data));
+        $('#yaml-editor').html(jsyaml.dump(data));
     });
 
     //raw
