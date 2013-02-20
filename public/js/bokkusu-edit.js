@@ -15,6 +15,7 @@ $(function() {
         try {
             var data = jsyaml.load($(this).val());
         } catch (e) {
+            // FIXME check if it's a YAML error
             console.log('error', e);
             $('#yaml p').html(e.name + ', ' + e.reason + '<br/>' + e.message);
             return;
@@ -22,14 +23,7 @@ $(function() {
         $('#yaml p').empty();
         editor.trigger('dataloaded', data);
     });
-    var load = function() {
-        $.getJSON('/data/' + key, function(data, status, xhr) {
-            editor.trigger('dataloaded', data);
-            editor.show();
-        }).error(function() {
-            editor.hide();
-        });
-    }
+
     editor.on('dataloaded', function(evt, data) {
         current = data;
     });
@@ -55,12 +49,22 @@ $(function() {
         $('#raw pre').html(JSON.stringify(data, null, 4));
     });
 
+    var load = function() {
+        $.getJSON('/data/' + key, function(data, status, xhr) {
+            editor.trigger('dataloaded', data);
+            editor.show();
+        }).error(function() {
+            editor.hide();
+        });
+    };
+
     var loadkey = function() {
         key = $('#key').val();
         load();
         return false;
     };
 
+    //Buttons actions
     $('form').submit(loadkey);
     $('#search').click(loadkey);
     $('#save').click(function() {
@@ -74,6 +78,7 @@ $(function() {
         });
         return false;
     });
+
     //initial load
     load();
 });
