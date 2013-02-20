@@ -21,7 +21,7 @@
                     <a href="#" id="search" class="btn"><i class="icon-search"></i></a>
                 </form>
             </div>
-            <div class="editor">
+            <div id="editor">
                 <div class="btn-group">
                     <a class="btn" href="#" id="save"><i class="icon-pencil"></i>Save</a>
                     <a class="btn disabled" href="#" id="undo"><i class="icon-refresh"></i>Undo</a>
@@ -43,7 +43,9 @@
                         </form>
 
                     </div>
-                    <div class="tab-pane" id="raw">...</div>
+                    <div class="tab-pane" id="raw">
+                        <pre> </pre>
+                    </div>
                 </div>
             </div>
 
@@ -55,24 +57,40 @@
         <script>
             $(function() {
                 $('#myTab a:last').tab('show');
-                var key="tdurden";
-                var current=null;
-                var editor = $('#editor');
+                var key = "tdurden",
+                    current = null,
+                    editor = $('#editor');
+                editor.hide();
                 var load = function() {
                     $.getJSON('/data/' + key, function(data, status, xhr) {
                         editor.trigger('dataloaded', data);
-                        $('#yaml-editor').val(jsyaml.dump(data));
-                        $('#mate-editor').jsonEditor(data, {change: function() {
-                            current = this.original;
-                        }});
-                        $('#editor').show()
+                        editor.show();
                     }).error(function() {
-                        $('#editor').hide();
+                        editor.hide();
                     });;
                 }
                 editor.on('dataloaded', function(evt, data) {
-                    console.log("just loaded that", data);
+                    current = data;
                 });
+                //Mate
+                editor.on('dataloaded', function(evt, data) {
+                    try {
+                        $('#mate-editor').jsonEditor(data, {change: function() {
+                            editor.trigger('dataloaded', this.original);
+                        }});
+                    } catch (e) {// strange live call for jquery
+                        console.log(e);
+                    }
+                });
+                //yaml
+                editor.on('dataloaded', function(evt, data) {
+                    $('#yaml-editor').val(jsyaml.dump(data));
+                });
+                //raw
+                editor.on('dataloaded', function(evt, data) {
+                    $('#raw pre').html(JSON.stringify(data, null, 4));
+                });
+
                 var loadkey = function() {
                     key = $('#key').val();
                     load();
