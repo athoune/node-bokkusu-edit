@@ -18,7 +18,7 @@
             <div class="control-group">
                 <form action="#" class="form-search">
                     <input type="text" name="key" id="key" class="input-medium search-query"/>
-                    <a href="#" id="search" class="btn"><i class="icon-search"></i></a>
+                    <a href="#" id="search" class="btn"><i class="icon-search"> </i></a>
                 </form>
             </div>
             <div id="editor">
@@ -38,6 +38,7 @@
                         <div id="mate-editor" class="json-editor"></div>
                     </div>
                     <div class="tab-pane" id="yaml">
+                        <p class="text-error"> </p>
                         <form action="#" class="form-search">
                             <textarea rows="3" id="yaml-editor"></textarea>
                         </form>
@@ -55,12 +56,26 @@
         <script src="/js/js-yaml.min.js"></script>
         <script src="/js/jquery.jsoneditor.min.js"></script>
         <script>
+            $.prototype.live = function() {
+                console.log('deprecated');
+            };
             $(function() {
                 $('#myTab a:last').tab('show');
                 var key = "tdurden",
                     current = null,
                     editor = $('#editor');
                 editor.hide();
+                $('#yaml-editor').blur(function(evt) {
+                    try {
+                        var data = jsyaml.load($(this).val());
+                    } catch (e) {
+                        console.log('error', e);
+                        $('#yaml p').html(e.name + ", " + e.reason + "<br/>" + e.message);
+                        return
+                    }
+                    $('#yaml p').empty();
+                    editor.trigger('dataloaded', data);
+                });
                 var load = function() {
                     $.getJSON('/data/' + key, function(data, status, xhr) {
                         editor.trigger('dataloaded', data);
