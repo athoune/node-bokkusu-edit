@@ -57,8 +57,10 @@
                 $('#myTab a:last').tab('show');
                 var key="tdurden";
                 var current=null;
+                var editor = $('#editor');
                 var load = function() {
                     $.getJSON('/data/' + key, function(data, status, xhr) {
+                        editor.trigger('dataloaded', data);
                         $('#yaml-editor').val(jsyaml.dump(data));
                         $('#mate-editor').jsonEditor(data, {change: function() {
                             current = this.original;
@@ -68,6 +70,9 @@
                         $('#editor').hide();
                     });;
                 }
+                editor.on('dataloaded', function(evt, data) {
+                    console.log("just loaded that", data);
+                });
                 var loadkey = function() {
                     key = $('#key').val();
                     load();
