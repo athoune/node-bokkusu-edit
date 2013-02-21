@@ -12,8 +12,8 @@ $(function() {
     editor.hide();
 
     $('#yaml-editor').blur(function(evt) {
+        var raw = $(this).html().toString().replace(/<br>/g, '\n');
         try {
-            var raw = $(this).html().toString().replace(/<br>/g, '\n');
             var data = jsyaml.load(raw);
         } catch (e) {
             // FIXME check if it's a YAML error
@@ -22,6 +22,19 @@ $(function() {
             return;
         }
         $('#yaml p').empty();
+        editor.trigger('dataloaded', data);
+    });
+
+    $('#raw pre').blur(function(evt) {
+        var raw = $(this).html().toString().replace(/<br>/g, '\n');
+        try {
+            var data = JSON.parse(raw);
+        } catch (e) {
+            console.log('error', e);
+            $('#raw p').html(e);
+            return;
+        }
+        $('#raw p').empty();
         editor.trigger('dataloaded', data);
     });
 
